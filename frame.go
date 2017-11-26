@@ -14,6 +14,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	uuid "github.com/catfi/go.uuid"
 )
 
 type unsetColumn struct{}
@@ -1651,13 +1653,13 @@ func (f *framer) readLongString() (s string) {
 	return
 }
 
-func (f *framer) readUUID() *UUID {
+func (f *framer) readUUID() *uuid.UUID {
 	if len(f.rbuf) < 16 {
 		panic(fmt.Errorf("not enough bytes in buffer to read uuid require %d got: %d", 16, len(f.rbuf)))
 	}
 
 	// TODO: how to handle this error, if it is a uuid, then sureley, problems?
-	u, _ := UUIDFromBytes(f.rbuf[:16])
+	u, _ := uuid.FromBytes(f.rbuf[:16])
 	f.rbuf = f.rbuf[16:]
 	return &u
 }
@@ -1840,7 +1842,7 @@ func (f *framer) writeLongString(s string) {
 	f.wbuf = append(f.wbuf, s...)
 }
 
-func (f *framer) writeUUID(u *UUID) {
+func (f *framer) writeUUID(u *uuid.UUID) {
 	f.wbuf = append(f.wbuf, u[:]...)
 }
 

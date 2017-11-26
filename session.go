@@ -18,7 +18,7 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/gocql/gocql/internal/lru"
+	"github.com/catfi/gocql/internal/lru"
 )
 
 // Session is the interface used by users to interact with the database.
@@ -162,6 +162,11 @@ func (s *Session) init() error {
 	}
 	s.ring.endpoints = hosts
 
+	// fmt.Printf("s.cfg.Hosts = %v\n", s.cfg.Hosts)
+	// for _, h := range hosts {
+	// 	fmt.Printf(">> hosts: %s\n", h.ConnectAddress().String())
+	// }
+
 	if !s.cfg.disableControlConn {
 		s.control = createControlConn(s)
 		if s.cfg.ProtoVersion == 0 {
@@ -190,6 +195,7 @@ func (s *Session) init() error {
 			s.policy.SetPartitioner(partitioner)
 			filteredHosts := make([]*HostInfo, 0, len(newHosts))
 			for _, host := range newHosts {
+				// fmt.Printf(">> new hosts: %s\n", host.ConnectAddress().String())
 				if !s.cfg.filterHost(host) {
 					filteredHosts = append(filteredHosts, host)
 				}
@@ -204,6 +210,7 @@ func (s *Session) init() error {
 	}
 
 	for _, host := range hostMap {
+		// fmt.Printf(">> hosts map: %s\n", host.ConnectAddress().String())
 		host = s.ring.addOrUpdate(host)
 		s.addNewNode(host)
 	}
@@ -653,6 +660,7 @@ func (s *Session) MapExecuteBatchCAS(batch *Batch, dest map[string]interface{}) 
 }
 
 func (s *Session) connect(host *HostInfo, errorHandler ConnErrorHandler) (*Conn, error) {
+	// fmt.Printf("host address: %s\n", host.ConnectAddress().String())
 	return s.dial(host.ConnectAddress(), host.Port(), s.connCfg, errorHandler)
 }
 

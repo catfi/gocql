@@ -18,6 +18,8 @@ import (
 	"time"
 
 	"gopkg.in/inf.v0"
+
+	uuid "github.com/catfi/go.uuid"
 )
 
 var (
@@ -1456,7 +1458,7 @@ func marshalUUID(info TypeInfo, value interface{}) ([]byte, error) {
 	switch val := value.(type) {
 	case unsetColumn:
 		return nil, nil
-	case UUID:
+	case uuid.UUID:
 		return val.Bytes(), nil
 	case []byte:
 		if len(val) != 16 {
@@ -1464,7 +1466,7 @@ func marshalUUID(info TypeInfo, value interface{}) ([]byte, error) {
 		}
 		return val, nil
 	case string:
-		b, err := ParseUUID(val)
+		b, err := uuid.FromString(val)
 		if err != nil {
 			return nil, err
 		}
@@ -1485,8 +1487,8 @@ func unmarshalUUID(info TypeInfo, data []byte, value interface{}) error {
 			*v = ""
 		case *[]byte:
 			*v = nil
-		case *UUID:
-			*v = UUID{}
+		case *uuid.UUID:
+			*v = uuid.UUID{}
 		default:
 			return unmarshalErrorf("can not unmarshal X %s into %T", info, value)
 		}
@@ -1494,7 +1496,7 @@ func unmarshalUUID(info TypeInfo, data []byte, value interface{}) error {
 		return nil
 	}
 
-	u, err := UUIDFromBytes(data)
+	u, err := uuid.FromBytes(data)
 	if err != nil {
 		return unmarshalErrorf("Unable to parse UUID: %s", err)
 	}
@@ -1506,7 +1508,7 @@ func unmarshalUUID(info TypeInfo, data []byte, value interface{}) error {
 	case *[]byte:
 		*v = u[:]
 		return nil
-	case *UUID:
+	case *uuid.UUID:
 		*v = u
 		return nil
 	}
@@ -1518,12 +1520,13 @@ func unmarshalTimeUUID(info TypeInfo, data []byte, value interface{}) error {
 	case Unmarshaler:
 		return v.UnmarshalCQL(info, data)
 	case *time.Time:
-		id, err := UUIDFromBytes(data)
+		id, err := uuid.FromBytes(data)
 		if err != nil {
 			return err
 		} else if id.Version() != 1 {
 			return unmarshalErrorf("invalid timeuuid")
 		}
+		uuid.NewV1()
 		*v = id.Time()
 		return nil
 	default:

@@ -19,9 +19,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/gocql/gocql/internal/lru"
-
-	"github.com/gocql/gocql/internal/streams"
+	"github.com/catfi/gocql/internal/lru"
+	"github.com/catfi/gocql/internal/streams"
 )
 
 var (
@@ -152,6 +151,8 @@ type Conn struct {
 // Connect establishes a connection to a Cassandra node.
 func (s *Session) dial(ip net.IP, port int, cfg *ConnConfig, errorHandler ConnErrorHandler) (*Conn, error) {
 	// TODO(zariel): remove these
+	// fmt.Printf(">> dial %s : %d\n", ip.String(), port)
+
 	if len(ip) == 0 || ip.IsUnspecified() {
 		panic(fmt.Sprintf("host missing connect ip address: %v", ip))
 	} else if port == 0 {

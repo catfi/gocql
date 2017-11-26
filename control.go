@@ -168,8 +168,11 @@ func (c *controlConn) shuffleDial(endpoints []*HostInfo) (*Conn, error) {
 
 	var err error
 	for _, host := range shuffled {
+		// fmt.Printf(">> endpoints: %s\n", host.ConnectAddress().String())
+
 		var conn *Conn
 		conn, err = c.session.connect(host, c)
+		// fmt.Printf(">> xxxx\n")
 		if err == nil {
 			return conn, nil
 		}
@@ -275,6 +278,8 @@ func (c *controlConn) setupConn(conn *Conn) error {
 	if err != nil {
 		return err
 	}
+
+	// fmt.Printf(">> localhostInfo = %s\n", host.String())
 
 	ch := &connHost{
 		conn: conn,

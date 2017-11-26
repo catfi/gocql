@@ -12,6 +12,8 @@ import (
 	"time"
 
 	"gopkg.in/inf.v0"
+
+	uuid "github.com/catfi/go.uuid"
 )
 
 type RowData struct {
@@ -44,7 +46,7 @@ func goType(t TypeInfo) reflect.Type {
 	case TypeDecimal:
 		return reflect.TypeOf(*new(*inf.Dec))
 	case TypeUUID, TypeTimeUUID:
-		return reflect.TypeOf(*new(UUID))
+		return reflect.TypeOf(*new(uuid.UUID))
 	case TypeList, TypeSet:
 		return reflect.SliceOf(goType(t.(CollectionType).Elem))
 	case TypeMap:

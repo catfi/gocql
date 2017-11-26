@@ -8,6 +8,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	uuid "github.com/catfi/go.uuid"
 )
 
 type nodeState int32
@@ -462,7 +464,7 @@ func (s *Session) hostInfoFromMap(row map[string]interface{}, port int) (*HostIn
 				return nil, fmt.Errorf(assertErrorMsg, "rack")
 			}
 		case "host_id":
-			hostId, ok := value.(UUID)
+			hostId, ok := value.(uuid.UUID)
 			if !ok {
 				return nil, fmt.Errorf(assertErrorMsg, "host_id")
 			}
